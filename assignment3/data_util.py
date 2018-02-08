@@ -8,6 +8,7 @@ import pickle
 import logging
 from collections import Counter
 
+import pdb
 import numpy as np
 from util import read_conll, one_hot, window_iterator, ConfusionMatrix, load_word_vector_mapping
 from defs import LBLS, NONE, LMAP, NUM, UNK, EMBED_SIZE
@@ -39,6 +40,7 @@ def normalize(word):
     """
     Normalize words that are numbers or have casing.
     """
+#    pdb.set_trace()
     if word.isdigit(): return NUM
     else: return word.lower()
 
@@ -87,6 +89,7 @@ class ModelHelper(object):
     def build(cls, data):
         # Preprocess data to construct an embedding
         # Reserve 0 for the special NIL token.
+        
         tok2id = build_dict((normalize(word) for sentence, _ in data for word in sentence), offset=1, max_words=10000)
         tok2id.update(build_dict([P_CASE + c for c in CASES], offset=len(tok2id)))
         tok2id.update(build_dict([START_TOKEN, END_TOKEN, UNK], offset=len(tok2id)))
@@ -102,7 +105,8 @@ class ModelHelper(object):
         if not os.path.exists(path):
             os.makedirs(path)
         # Save the tok2id map.
-        with open(os.path.join(path, "features.pkl"), "w") as f:
+        with open(os.path.join(path, "features.pkl"), "wb") as f:
+            #pdb.set_trace()
             pickle.dump([self.tok2id, self.max_length], f)
 
     @classmethod
@@ -110,7 +114,7 @@ class ModelHelper(object):
         # Make sure the directory exists.
         assert os.path.exists(path) and os.path.exists(os.path.join(path, "features.pkl"))
         # Save the tok2id map.
-        with open(os.path.join(path, "features.pkl")) as f:
+        with open(os.path.join(path, "features.pkl"), "rb") as f:
             tok2id, max_length = pickle.load(f)
         return cls(tok2id, max_length)
 

@@ -107,7 +107,7 @@ class ModelHelper(object):
         # Save the tok2id map.
         with open(os.path.join(path, "features.pkl"), "wb") as f:
             #pdb.set_trace()
-            pickle.dump([self.tok2id, self.max_length], f)
+            pickle.dump([self.tok2id, self.max_length], f, protocol=2)
 
     @classmethod
     def load(cls, path):
